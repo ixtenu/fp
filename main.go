@@ -47,7 +47,10 @@ func parseConfig() config {
 	// 2. INI file (~/.config/fp/fp.ini).
 	loadIni(&cfg)
 
-	// 3. Environment variables.
+	// 3. Project INI file (.fp.ini, searched upward from CWD).
+	loadProjectIni(&cfg)
+
+	// 4. Environment variables.
 	if v := os.Getenv("FP_LINE_WIDTH"); v != "" {
 		if n, err := strconv.Atoi(v); err == nil {
 			cfg.maxWidth = n
@@ -87,8 +90,6 @@ func parseConfig() config {
 
 // loadIni reads $XDG_CONFIG_HOME/fp/fp.ini (or ~/.config/fp/fp.ini if
 // XDG_CONFIG_HOME is unset) and applies any recognised settings to cfg.
-// If the file does not exist, is unreadable, or contains invalid content, it is
-// silently ignored so that cfg is left unchanged.
 func loadIni(cfg *config) {
 	var configDir string
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
@@ -100,7 +101,34 @@ func loadIni(cfg *config) {
 		}
 		configDir = filepath.Join(home, ".config")
 	}
-	path := filepath.Join(configDir, "fp", "fp.ini")
+	parseIniFile(filepath.Join(configDir, "fp", "fp.ini"), cfg)
+}
+
+// loadProjectIni walks up from the current working directory looking for a
+// .fp.ini file and applies the first one found to cfg.
+func loadProjectIni(cfg *config) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return
+	}
+	for {
+		path := filepath.Join(dir, ".fp.ini")
+		if _, err := os.Stat(path); err == nil {
+			parseIniFile(path, cfg)
+			return
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return // reached filesystem root
+		}
+		dir = parent
+	}
+}
+
+// parseIniFile reads an INI file at path and applies recognised settings to
+// cfg.  If the file does not exist, is unreadable, or contains invalid content,
+// cfg is left unchanged.
+func parseIniFile(path string, cfg *config) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return
@@ -140,7 +168,9 @@ func loadIni(cfg *config) {
 			default:
 				return
 			}
-		// Unknown keys are silently ignored (forward-compatible).
+		default:
+			// Unknown keys are silently ignored (forward-compatible).
+			break
 		}
 	}
 	*cfg = tmp

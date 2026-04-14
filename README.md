@@ -1,9 +1,9 @@
 # fp
 
 `fp` ("fill paragraph") is a command-line text filter that reflows prose to a
-given line width. It is similar to `fmt(1)` but adds support for comment
+given line width.  It is similar to `fmt(1)` but adds support for comment
 prefixes (`//`, `#`, `>`, etc.), bulleted and numbered lists, sentence spacing,
-and aesthetically-balanced line breaking. See [SPEC.md](SPEC.md) for full
+and aesthetically-balanced line breaking.  See [SPEC.md](SPEC.md) for full
 behavioral details.
 
 ## Building
@@ -20,14 +20,30 @@ fp [-wN] [-sN] [-a]
 
 Reads from stdin, writes to stdout.
 
+## Settings
+
+`fp` has three settings which control its behavior.  The values used for these
+settings come from the following sources, in priority order (highest to lowest):
+command-line flags, environment variables, `.fp.ini` (project config),
+`~/.config/fp/fp.ini` (user config), and finally built-in defaults.
+
+**Command-line flags:**
+
 | Flag | Default | Description |
 |------|---------|-------------|
 | `-wN` | 80 | Maximum line width in columns |
 | `-sN` | 2 | Spaces inserted after a sentence-ending character |
 | `-a` | off | Aesthetic (Knuth–Plass) wrapping instead of greedy |
 
-The same settings can be persisted in `~/.config/fp/fp.ini`
-(or `$XDG_CONFIG_HOME/fp/fp.ini` if `XDG_CONFIG_HOME` is set):
+**Environment variables:**
+`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_AESTHETIC_WRAP` (non-empty to enable).
+
+**Project config:** a `.fp.ini` file in the current directory or any ancestor
+directory (the nearest one wins).  Supports the same keys as the user config
+(see below); missing keys inherit from the user config.
+
+**User config:** `$XDG_CONFIG_HOME/fp/fp.ini` (or `~/.config/fp/fp.ini` if
+`$XDG_CONFIG_HOME` is unset) with the following keys:
 
 ```ini
 line_width = 80
@@ -35,10 +51,9 @@ sentence_spaces = 2
 aesthetic_wrap = false
 ```
 
-Or via environment variables:
-`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_AESTHETIC_WRAP` (non-empty to enable).
-
-Priority (lowest to highest): built-in defaults, `fp.ini`, environment variables, command-line flags.
+For both the project and user config, unrecognized keys are silently ignored,
+while syntax errors or invalid key values cause the entire file to be silently
+ignored.
 
 ## Examples
 

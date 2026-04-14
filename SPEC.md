@@ -13,16 +13,16 @@ Reads from stdin and writes to standard out.
 -a Wrap lines aesthetically rather than greedily.
 ```
 
-The defaults for options can also be set in the configuration file or via
+The defaults for options can also be set in configuration files or via
 environment variables.  The priority order, from lowest to highest, is:
-built-in defaults, configuration file, environment variables, command-line
-flags.
+built-in defaults, user configuration file, project configuration file,
+environment variables, command-line flags.
 
-### Configuration file
+### User configuration file
 
 `fp` reads `$XDG_CONFIG_HOME/fp/fp.ini` if `XDG_CONFIG_HOME` is set, otherwise
 `~/.config/fp/fp.ini`.  The file uses INI syntax: `key = value` pairs, with `#`
-or `;` introducing comments.  Unrecognised keys are ignored.  If the file
+or `;` introducing comments.  Unrecognized keys are ignored.  If the file
 contains invalid syntax or an invalid value for a recognised key, the entire
 file is ignored.
 
@@ -42,6 +42,15 @@ line_width = 100
 sentence_spaces = 1
 aesthetic_wrap = true
 ```
+
+### Project configuration file
+
+`fp` searches for a `.fp.ini` file starting from the current working directory
+and walking upward toward the filesystem root, stopping at the first file found.
+This file uses the same INI syntax and supports the same keys as the user
+configuration file.  Keys not present in `.fp.ini` retain the values from the
+user configuration file (or built-in defaults if no user configuration file
+exists).  An invalid `.fp.ini` is silently ignored.
 
 ### Environment variables
 
