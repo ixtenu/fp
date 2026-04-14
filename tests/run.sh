@@ -14,6 +14,18 @@ if [ ! -x "$FP" ]; then
     exit 1
 fi
 
+# Run fp in an isolated environment so that any fp.ini files present on the
+# developer's machine do not affect test results.
+#
+# XDG_CONFIG_HOME is pointed at an empty temp directory, preventing fp from
+# reading the user's ~/.config/fp/fp.ini.  fp is also invoked with its working
+# directory set to that same temp directory, so the .fp.ini walk-up finds
+# nothing (the only ancestors of /tmp/... are /tmp and /, neither of which
+# would ordinarily contain .fp.ini).
+_FP_TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$_FP_TMPDIR"' EXIT
+export XDG_CONFIG_HOME="$_FP_TMPDIR"
+
 pass=0
 fail=0
 
@@ -36,7 +48,7 @@ run_test() {
     fi
 
     local actual expected
-    actual=$("$FP" "${flags[@]}" < "$in_file")
+    actual=$(cd "$_FP_TMPDIR" && "$FP" "${flags[@]}" < "$in_file")
     expected=$(cat "$out_file")
 
     if [ "$actual" = "$expected" ]; then
