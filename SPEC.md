@@ -13,7 +13,37 @@ Reads from stdin and writes to standard out.
 -a Wrap lines aesthetically rather than greedily.
 ```
 
-The defaults for options can also be overridden via environment variables:
+The defaults for options can also be set in the configuration file or via
+environment variables.  The priority order, from lowest to highest, is:
+built-in defaults, configuration file, environment variables, command-line
+flags.
+
+### Configuration file
+
+`fp` reads `$XDG_CONFIG_HOME/fp/fp.ini` if `XDG_CONFIG_HOME` is set, otherwise
+`~/.config/fp/fp.ini`.  The file uses INI syntax: `key = value` pairs, with `#`
+or `;` introducing comments.  Unrecognised keys are ignored.  If the file
+contains invalid syntax or an invalid value for a recognised key, the entire
+file is ignored.
+
+Supported keys:
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `line_width` | integer | Maximum line width in columns |
+| `sentence_spaces` | integer | Spaces inserted after a sentence-ending character |
+| `aesthetic_wrap` | boolean (`true`/`false`, `1`/`0`, `yes`/`no`, `on`/`off`) | Enable aesthetic (Knuth–Plass) wrapping |
+
+Example:
+
+```ini
+# fp configuration
+line_width = 100
+sentence_spaces = 1
+aesthetic_wrap = true
+```
+
+### Environment variables
 
 - `FP_LINE_WIDTH`
 - `FP_SENTENCE_SPACES`

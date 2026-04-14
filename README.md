@@ -26,8 +26,19 @@ Reads from stdin, writes to stdout.
 | `-sN` | 2 | Spaces inserted after a sentence-ending character |
 | `-a` | off | Aesthetic (Knuth–Plass) wrapping instead of greedy |
 
-The same defaults can be set via environment variables:
+The same settings can be persisted in `~/.config/fp/fp.ini`
+(or `$XDG_CONFIG_HOME/fp/fp.ini` if `XDG_CONFIG_HOME` is set):
+
+```ini
+line_width = 80
+sentence_spaces = 2
+aesthetic_wrap = false
+```
+
+Or via environment variables:
 `FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_AESTHETIC_WRAP` (non-empty to enable).
+
+Priority (lowest to highest): built-in defaults, `fp.ini`, environment variables, command-line flags.
 
 ## Examples
 

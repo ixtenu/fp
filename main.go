@@ -7,6 +7,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -36,12 +37,32 @@ var prefixTokens = []string{"///", "//", "##", "rem", ">", "#", "%", "!", "*"}
 var numberedRe = regexp.MustCompile(`^[0-9]+\. `)
 
 func parseConfig() config {
+	// 1. Hard-coded defaults.
 	cfg := config{
-		maxWidth:       intEnv("FP_LINE_WIDTH", 80),
-		sentenceSpaces: intEnv("FP_SENTENCE_SPACES", 2),
-		aesthetic:      os.Getenv("FP_AESTHETIC_WRAP") != "",
+		maxWidth:       80,
+		sentenceSpaces: 2,
+		aesthetic:      false,
 	}
 
+	// 2. INI file (~/.config/fp/fp.ini).
+	loadIni(&cfg)
+
+	// 3. Environment variables.
+	if v := os.Getenv("FP_LINE_WIDTH"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			cfg.maxWidth = n
+		}
+	}
+	if v := os.Getenv("FP_SENTENCE_SPACES"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			cfg.sentenceSpaces = n
+		}
+	}
+	if os.Getenv("FP_AESTHETIC_WRAP") != "" {
+		cfg.aesthetic = true
+	}
+
+	// 4. Command-line flags.
 	// Pre-process args: expand -wN and -sN into -w=N and -s=N so that the
 	// standard flag package can parse them.
 	args := os.Args[1:]
@@ -64,13 +85,65 @@ func parseConfig() config {
 	return cfg
 }
 
-func intEnv(key string, def int) int {
-	if v := os.Getenv(key); v != "" {
-		if n, err := strconv.Atoi(v); err == nil {
-			return n
+// loadIni reads $XDG_CONFIG_HOME/fp/fp.ini (or ~/.config/fp/fp.ini if
+// XDG_CONFIG_HOME is unset) and applies any recognised settings to cfg.
+// If the file does not exist, is unreadable, or contains invalid content, it is
+// silently ignored so that cfg is left unchanged.
+func loadIni(cfg *config) {
+	var configDir string
+	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
+		configDir = xdg
+	} else {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return
+		}
+		configDir = filepath.Join(home, ".config")
+	}
+	path := filepath.Join(configDir, "fp", "fp.ini")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return
+	}
+
+	tmp := *cfg // parse into a copy; only commit if the whole file is valid
+	for _, rawLine := range strings.Split(string(data), "\n") {
+		line := strings.TrimSpace(rawLine)
+		if line == "" || line[0] == '#' || line[0] == ';' || line[0] == '[' {
+			continue // blank lines, comments, section headers: skip
+		}
+		eq := strings.IndexByte(line, '=')
+		if eq < 0 {
+			return // not a key=value line: file is invalid, abort
+		}
+		key := strings.TrimSpace(line[:eq])
+		val := strings.TrimSpace(line[eq+1:])
+		switch key {
+		case "line_width":
+			n, err := strconv.Atoi(val)
+			if err != nil {
+				return
+			}
+			tmp.maxWidth = n
+		case "sentence_spaces":
+			n, err := strconv.Atoi(val)
+			if err != nil {
+				return
+			}
+			tmp.sentenceSpaces = n
+		case "aesthetic_wrap":
+			switch strings.ToLower(val) {
+			case "true", "1", "yes", "on":
+				tmp.aesthetic = true
+			case "false", "0", "no", "off":
+				tmp.aesthetic = false
+			default:
+				return
+			}
+		// Unknown keys are silently ignored (forward-compatible).
 		}
 	}
-	return def
+	*cfg = tmp
 }
 
 // ---- column width -----------------------------------------------------------
