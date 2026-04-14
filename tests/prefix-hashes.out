@@ -1,0 +1,6 @@
+## Double-hash comment that is long and must
+## use the longest prefix match rather than
+## single hash.
+
+# Single-hash comment that is also long and
+# should be wrapped at the column width.
