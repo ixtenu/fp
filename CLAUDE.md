@@ -26,7 +26,7 @@ The entire program is a single file, `main.go`. Processing flows in one pass:
 ### Key data structures
 
 - **`word`** — a single whitespace-delimited token with its column width (via `go-runewidth`) and a `sentenceBreak` flag.
-- **`config`** — width, sentence spaces, aesthetic flag; populated from flags and env vars.
+- **`config`** — width, sentence spaces, aesthetic flag; populated from (in this priority) hard-coded defaults, user INI, project INI, env vars, command-line flags.
 
 ### Sentence spacing
 
