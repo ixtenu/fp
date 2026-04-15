@@ -74,7 +74,7 @@ fp -s1 -a < input.txt
 `fp` works with any text editor that supports filtering a region through a shell
 command.
 
-**Vim / Neovim** — select the paragraph in visual mode, then:
+**Vim / Neovim** – select the paragraph in visual mode, then:
 
 ```
 :'<,'>!fp
@@ -88,21 +88,15 @@ Or, with the cursor inside a paragraph, use the `!` motion:
 
 (`ap` selects "a paragraph".)
 
-**GNU Emacs** — with a region selected:
+**GNU Emacs** – with a region selected:
 
 ```
 C-u M-| fp RET
 ```
 
-**Plan 9 text editors (sam, Acme)** - with a non-empty dot (i.e., with selected
+**Plan 9 text editors (sam, Acme)** – with a non-empty dot (i.e., with selected
 text):
 
 ```
 |fp
-```
-
-**sed / shell pipelines:**
-
-```sh
-sed -n '10,20p' file.txt | fp -w72
 ```
