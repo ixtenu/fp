@@ -65,7 +65,7 @@ func parseConfig() config {
 		cfg.aesthetic = true
 	}
 
-	// 4. Command-line flags.
+	// 5. Command-line flags.
 	// Pre-process args: expand -wN and -sN into -w=N and -s=N so that the
 	// standard flag package can parse them.
 	args := os.Args[1:]
