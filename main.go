@@ -178,8 +178,18 @@ func parseIniFile(path string, cfg *config) {
 
 // ---- column width -----------------------------------------------------------
 
+// colWidth returns the display column width of s, expanding tabs to 8-column
+// tab stops (the Unix/terminal default).
 func colWidth(s string) int {
-	return runewidth.StringWidth(s)
+	col := 0
+	for _, r := range s {
+		if r == '\t' {
+			col = (col/8 + 1) * 8
+		} else {
+			col += runewidth.RuneWidth(r)
+		}
+	}
+	return col
 }
 
 // ---- prefix detection -------------------------------------------------------

@@ -111,7 +111,7 @@ input.
 If the input text is indented, this is preserved in the output.  The exact
 whitespace characters used on the first line of the paragraph are used for all
 lines of the reflowed paragraph.  Tabs, spaces, or a mixture of both are
-supported.
+supported.  Tabs are measured using 8-column tab stops.
 
 ## Prefixing
 
