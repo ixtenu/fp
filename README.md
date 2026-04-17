@@ -15,14 +15,14 @@ go build
 ## Usage
 
 ```
-fp [-wN] [-sN] [-a]
+fp [-wN] [-sN] [-tN] [-a]
 ```
 
 Reads from stdin, writes to stdout.
 
 ## Settings
 
-`fp` has three settings which control its behavior.  The values used for these
+`fp` has four settings which control its behavior.  The values used for these
 settings come from the following sources, in priority order (highest to lowest):
 command-line flags, environment variables, `.fp.ini` (project config),
 `~/.config/fp/fp.ini` (user config), and finally built-in defaults.
@@ -33,10 +33,11 @@ command-line flags, environment variables, `.fp.ini` (project config),
 |------|---------|-------------|
 | `-wN` | 80 | Maximum line width in columns |
 | `-sN` | 2 | Spaces inserted after a sentence-ending character |
+| `-tN` | 8 | Tab stop interval in columns |
 | `-a` | off | Aesthetic (Knuth–Plass) wrapping instead of greedy |
 
 **Environment variables:**
-`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_AESTHETIC_WRAP` (non-empty to enable).
+`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_TAB_STOP`, `FP_AESTHETIC_WRAP` (non-empty to enable).
 
 **Project config:** a `.fp.ini` file in the current directory or any ancestor
 directory (the nearest one wins).  Supports the same keys as the user config
@@ -48,6 +49,7 @@ directory (the nearest one wins).  Supports the same keys as the user config
 ```ini
 line_width = 80
 sentence_spaces = 2
+tab_stop = 8
 aesthetic_wrap = false
 ```
 

@@ -21,6 +21,7 @@ import (
 type config struct {
 	maxWidth       int
 	sentenceSpaces int
+	tabStop        int
 	aesthetic      bool
 }
 
@@ -41,6 +42,7 @@ func parseConfig() config {
 	cfg := config{
 		maxWidth:       80,
 		sentenceSpaces: 2,
+		tabStop:        8,
 		aesthetic:      false,
 	}
 
@@ -61,6 +63,11 @@ func parseConfig() config {
 			cfg.sentenceSpaces = n
 		}
 	}
+	if v := os.Getenv("FP_TAB_STOP"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			cfg.tabStop = n
+		}
+	}
 	if os.Getenv("FP_AESTHETIC_WRAP") != "" {
 		cfg.aesthetic = true
 	}
@@ -71,7 +78,7 @@ func parseConfig() config {
 	args := os.Args[1:]
 	expanded := make([]string, 0, len(args))
 	for _, a := range args {
-		if len(a) > 2 && a[0] == '-' && (a[1] == 'w' || a[1] == 's') {
+		if len(a) > 2 && a[0] == '-' && (a[1] == 'w' || a[1] == 's' || a[1] == 't') {
 			expanded = append(expanded, "-"+string(a[1])+"="+a[2:])
 		} else {
 			expanded = append(expanded, a)
@@ -80,10 +87,12 @@ func parseConfig() config {
 	fs := flag.NewFlagSet("fp", flag.ExitOnError)
 	w := fs.Int("w", cfg.maxWidth, "max line width")
 	s := fs.Int("s", cfg.sentenceSpaces, "spaces after sentence end")
+	t := fs.Int("t", cfg.tabStop, "tab stop interval")
 	a := fs.Bool("a", cfg.aesthetic, "aesthetic wrap")
 	fs.Parse(expanded) //nolint:errcheck // ExitOnError handles it
 	cfg.maxWidth = *w
 	cfg.sentenceSpaces = *s
+	cfg.tabStop = *t
 	cfg.aesthetic = *a
 	return cfg
 }
@@ -159,6 +168,12 @@ func parseIniFile(path string, cfg *config) {
 				return
 			}
 			tmp.sentenceSpaces = n
+		case "tab_stop":
+			n, err := strconv.Atoi(val)
+			if err != nil {
+				return
+			}
+			tmp.tabStop = n
 		case "aesthetic_wrap":
 			switch strings.ToLower(val) {
 			case "true", "1", "yes", "on":
@@ -178,13 +193,13 @@ func parseIniFile(path string, cfg *config) {
 
 // ---- column width -----------------------------------------------------------
 
-// colWidth returns the display column width of s, expanding tabs to 8-column
-// tab stops (the Unix/terminal default).
-func colWidth(s string) int {
+// colWidth returns the display column width of s, expanding tabs using the
+// given tab stop interval.
+func colWidth(s string, tabStop int) int {
 	col := 0
 	for _, r := range s {
 		if r == '\t' {
-			col = (col/8 + 1) * 8
+			col = (col/tabStop + 1) * tabStop
 		} else {
 			col += runewidth.RuneWidth(r)
 		}
@@ -305,7 +320,7 @@ func extractWords(text string, cfg config) []word {
 	for i, w := range raw {
 		words[i] = word{
 			text:          w,
-			width:         colWidth(w),
+			width:         colWidth(w, cfg.tabStop),
 			sentenceBreak: cfg.sentenceSpaces > 1 && wordEndsSentence(w),
 		}
 	}
@@ -436,8 +451,8 @@ func renderParagraph(words []word, firstPrefix, contPrefix string, cfg config) [
 		return []string{line}
 	}
 
-	fpW := colWidth(firstPrefix)
-	cpW := colWidth(contPrefix)
+	fpW := colWidth(firstPrefix, cfg.tabStop)
+	cpW := colWidth(contPrefix, cfg.tabStop)
 
 	// We must account for the prefix width when wrapping.
 	// The available text width on the first line may differ from continuation
@@ -597,7 +612,7 @@ func processListChunk(lines []string, prefix, baseIndent string, cfg config) []s
 		i++
 
 		// contIndent: spaces to align continuation with text after token.
-		contPad := strings.Repeat(" ", colWidth(tok))
+		contPad := strings.Repeat(" ", colWidth(tok, cfg.tabStop))
 
 		// Collect continuation lines (and nested lists).
 		var nestedLines []string

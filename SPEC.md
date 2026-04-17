@@ -6,10 +6,11 @@
 ## Usage
 
 ```
-fp [-wN] [-sN] [-a]
+fp [-wN] [-sN] [-tN] [-a]
 Reads from stdin and writes to standard out.
 -wN Set maximum line width to N columns (default 80).
 -sN Set spaces after sentence end (default 2).
+-tN Set tab stop interval to N columns (default 8).
 -a Wrap lines aesthetically rather than greedily.
 ```
 
@@ -32,6 +33,7 @@ Supported keys:
 |-----|------|-------------|
 | `line_width` | integer | Maximum line width in columns |
 | `sentence_spaces` | integer | Spaces inserted after a sentence-ending character |
+| `tab_stop` | integer | Tab stop interval in columns |
 | `aesthetic_wrap` | boolean (`true`/`false`, `1`/`0`, `yes`/`no`, `on`/`off`) | Enable aesthetic (Knuth–Plass) wrapping |
 
 Example:
@@ -56,6 +58,7 @@ exists).  An invalid `.fp.ini` is silently ignored.
 
 - `FP_LINE_WIDTH`
 - `FP_SENTENCE_SPACES`
+- `FP_TAB_STOP`
 - `FP_AESTHETIC_WRAP` (non-empty to enable)
 
 ## Paragraphs
@@ -111,7 +114,8 @@ input.
 If the input text is indented, this is preserved in the output.  The exact
 whitespace characters used on the first line of the paragraph are used for all
 lines of the reflowed paragraph.  Tabs, spaces, or a mixture of both are
-supported.  Tabs are measured using 8-column tab stops.
+supported.  Tabs are measured using the configured tab stop interval (default
+8 columns).
 
 ## Prefixing
 
