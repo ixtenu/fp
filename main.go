@@ -68,8 +68,13 @@ func parseConfig() config {
 			cfg.tabStop = n
 		}
 	}
-	if os.Getenv("FP_AESTHETIC_WRAP") != "" {
-		cfg.aesthetic = true
+	if v := os.Getenv("FP_AESTHETIC_WRAP"); v != "" {
+		switch strings.ToLower(v) {
+		case "true", "1", "yes", "on":
+			cfg.aesthetic = true
+		case "false", "0", "no", "off":
+			cfg.aesthetic = false
+		}
 	}
 
 	// 5. Command-line flags.
@@ -88,7 +93,7 @@ func parseConfig() config {
 	w := fs.Int("w", cfg.maxWidth, "max line width")
 	s := fs.Int("s", cfg.sentenceSpaces, "spaces after sentence end")
 	t := fs.Int("t", cfg.tabStop, "tab stop interval")
-	a := fs.Bool("a", cfg.aesthetic, "aesthetic wrap")
+	a := fs.Bool("a", cfg.aesthetic, "aesthetic wrap (use -a=false to disable)")
 	fs.Parse(expanded) //nolint:errcheck // ExitOnError handles it
 	cfg.maxWidth = *w
 	cfg.sentenceSpaces = *s

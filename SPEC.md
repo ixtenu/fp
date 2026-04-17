@@ -60,7 +60,8 @@ exists).  An invalid `.fp.ini` is silently ignored.
 - `FP_LINE_WIDTH`
 - `FP_SENTENCE_SPACES`
 - `FP_TAB_STOP`
-- `FP_AESTHETIC_WRAP` (non-empty to enable)
+- `FP_AESTHETIC_WRAP` (`true`/`1`/`yes`/`on` to enable; `false`/`0`/`no`/`off`
+  to disable)
 
 ## Paragraphs
 

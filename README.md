@@ -37,7 +37,8 @@ command-line flags, environment variables, `.fp.ini` (project config),
 | `-a` | off | Aesthetic (Knuth–Plass) wrapping instead of greedy |
 
 **Environment variables:**
-`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_TAB_STOP`, `FP_AESTHETIC_WRAP` (non-empty to enable).
+`FP_LINE_WIDTH`, `FP_SENTENCE_SPACES`, `FP_TAB_STOP`,
+`FP_AESTHETIC_WRAP` (`true`/`1`/`yes`/`on` or `false`/`0`/`no`/`off`).
 
 **Project config:** a `.fp.ini` file in the current directory or any ancestor
 directory (the nearest one wins).  Supports the same keys as the user config
