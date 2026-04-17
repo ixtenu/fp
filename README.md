@@ -71,32 +71,30 @@ fp -s1 -a < input.txt
 
 ## Text editor integration
 
-`fp` works with any text editor that supports filtering a region through a shell
-command.
+`fp` works with any text editor that supports filtering text through a shell
+command.  It is especially useful with text editors which do not have a built-in
+command for reflowing text, or which implement only a primitive version of it.
 
-**Vim / Neovim** – select the paragraph in visual mode, then:
+The below table shows how to filter text through `fp` with some example text
+editors.  Select some text and run the indicated command (`C`=Ctrl, `M`=Alt):
 
-```
-:'<,'>!fp
-```
+| Editor | Command
+| ------ | -------
+| [Acme](https://github.com/9fans/plan9port) | `¦fp` |
+| [dte](https://craigbarnes.gitlab.io/dte/) | `M-x filter fp` |
+| [GNU Emacs](https://www.gnu.org/software/emacs/) | `C-u M-¦ fp` |
+| [godit](https://github.com/nsf/godit) | `C-x ! fp` |
+| [JOE](https://joe-editor.sourceforge.io/) | `C-k / fp` |
+| [Kate](https://kate-editor.org/) | `C-\ fp` |
+| [micro](https://micro-editor.github.io/) | `C-e textfilter fp` |
+| [mle](https://github.com/adsr/mle) | `M-e fp` |
+| [ne](https://github.com/vigna/ne/) | `M-t fp` |
+| [NEdit](https://sourceforge.net/projects/nedit/) | `M-r fp` |
+| [sam](https://github.com/japanoise/sam) | `¦fp` |
+| [Textadept](https://orbitalquark.github.io/textadept/) | `C-¦ fp` |
+| [Vim](https://www.vim.org/) | `:'<,'>!fp` |
+| [vis](https://github.com/martanne/vis) | `:¦fp` |
 
-Or, with the cursor inside a paragraph, use the `!` motion:
-
-```
-!apfp
-```
-
-(`ap` selects "a paragraph".)
-
-**GNU Emacs** – with a region selected:
-
-```
-C-u M-| fp RET
-```
-
-**Plan 9 text editors (sam, Acme)** – with a non-empty dot (i.e., with selected
-text):
-
-```
-|fp
-```
+Note: The above table uses `¦` (broken vertical bar) as a substitute for `|`
+(vertical bar), since the latter character terminates a Markdown table cell.  In
+all cases, use `|` (vertical bar) from within the text editor.
