@@ -149,7 +149,7 @@ func parseIniFile(path string, cfg *config) {
 	}
 
 	tmp := *cfg // parse into a copy; only commit if the whole file is valid
-	for _, rawLine := range strings.Split(string(data), "\n") {
+	for rawLine := range strings.SplitSeq(string(data), "\n") {
 		line := strings.TrimSpace(rawLine)
 		if line == "" || line[0] == '#' || line[0] == ';' || line[0] == '[' {
 			continue // blank lines, comments, section headers: skip
@@ -190,7 +190,6 @@ func parseIniFile(path string, cfg *config) {
 			}
 		default:
 			// Unknown keys are silently ignored (forward-compatible).
-			break
 		}
 	}
 	*cfg = tmp
@@ -350,7 +349,7 @@ func joinWords(words []word, start, end, sentenceSpaces int) string {
 	b.WriteString(words[start].text)
 	for i := start + 1; i < end; i++ {
 		sp := spaceAfter(words, i-1, sentenceSpaces)
-		for j := 0; j < sp; j++ {
+		for range sp {
 			b.WriteByte(' ')
 		}
 		b.WriteString(words[i].text)
