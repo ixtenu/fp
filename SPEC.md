@@ -76,12 +76,13 @@ input lines had trailing whitespace.
 ## Sentence spacing
 
 When spaces between sentences is >1, detecting where sentences end becomes
-important.  The following characters end a sentence: `".?!"`.  Sentence-end
-characters are only regarded as ending a sentence when they are immediately
-followed by a space, newline, or quotation mark.  If a sentence-end character
-occurs immediately before a quotation mark, the spacing is added after the
-quotation mark.  Quotation marks for this purpose include ASCII `"` and `'` and
-the Unicode closing curly quotes `"` and `'`.
+important.  The following characters end a sentence: `.` (period), `?` (question
+mark), and `!` (exclamation mark).  Sentence-end characters are only regarded as
+ending a sentence when they are immediately followed by a space, newline, or
+quotation mark.  If a sentence-end character occurs immediately before a
+quotation mark, the spacing is added after the quotation mark.  Quotation marks
+for this purpose include ASCII `"` and `'` and the Unicode closing curly quotes
+`"` and `'`.
 
 As an exception, several English-language abbreviations which almost never occur
 at the end of a sentence are detected and the sentence-end characters in them
