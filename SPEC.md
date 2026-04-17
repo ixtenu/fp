@@ -132,6 +132,11 @@ being used.
 
 If the prefix token is indented, that indentation is preserved in the output.
 
+If there is extra indentation between the prefix token and the text (e.g.,
+`//  text` with two spaces after `//`), that extra indentation is also preserved:
+it becomes part of the effective prefix, so all output lines in that paragraph
+carry the same extra indentation.
+
 If an input line does not begin with the expected prefix, it is passed through
 to the output as-is (without reflowing).  This handles the case where a user
 accidentally includes non-comment lines in the selection.

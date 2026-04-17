@@ -475,13 +475,17 @@ func processChunk(lines []string, cfg config) []string {
 	afterIndent := lines[0][len(indent):]
 	prefix, afterPrefix := detectPrefix(afterIndent)
 
-	// Detect list token from first line (after indent and prefix).
-	listTok, _ := detectListToken(afterPrefix)
+	// Preserve any extra indentation between the prefix token and the text.
+	afterPrefixIndent := leadingWS(afterPrefix)
+	fullPrefix := indent + prefix + afterPrefixIndent
+
+	// Detect list token from first line (after indent, prefix, and extra indent).
+	listTok, _ := detectListToken(afterPrefix[len(afterPrefixIndent):])
 
 	if listTok != "" {
-		return processListChunk(lines, indent+prefix, "", cfg)
+		return processListChunk(lines, fullPrefix, "", cfg)
 	}
-	return processTextChunk(lines, indent+prefix, "", cfg)
+	return processTextChunk(lines, fullPrefix, "", cfg)
 }
 
 // processTextChunk reflows a simple (non-list) paragraph.
