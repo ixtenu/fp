@@ -42,6 +42,7 @@ Example:
 # fp configuration
 line_width = 100
 sentence_spaces = 1
+tab_stop = 8
 aesthetic_wrap = true
 ```
 
