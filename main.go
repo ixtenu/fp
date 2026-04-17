@@ -32,7 +32,7 @@ var abbreviations = map[string]bool{
 }
 
 // prefixTokens in longest-first order so longest match wins.
-var prefixTokens = []string{"///", "//", "##", "rem", ">", "#", "%", "!", "*"}
+var prefixTokens = []string{"///", "//", "--", "##", "rem", ">", "#", "%", "!", "*"}
 
 var numberedRe = regexp.MustCompile(`^[0-9]+\. `)
 

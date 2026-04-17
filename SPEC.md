@@ -119,7 +119,7 @@ If the first input line starts with any of the following tokens followed by a
 space, it is treated as a prefix which must occur at the start of each output
 line:
 
-`>`, `//`, `///`, `#`, `##`, `%`, `!`, `*`, `rem` (case-insensitive)
+`>`, `//`, `///`, `--`, `#`, `##`, `%`, `!`, `*`, `rem` (case-insensitive)
 
 When multiple tokens could match (e.g., `///` vs. `//`), the longest match is
 used.
